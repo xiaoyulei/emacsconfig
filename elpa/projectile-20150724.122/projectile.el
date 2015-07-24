@@ -4,7 +4,7 @@
 
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/projectile
-;; Package-Version: 20150721.547
+;; Package-Version: 20150724.122
 ;; Keywords: project, convenience
 ;; Version: 0.13.0-cvs
 ;; Package-Requires: ((dash "2.11.0") (pkg-info "0.4"))
@@ -798,7 +798,14 @@ Files are returned as relative paths to the project root."
   :group 'projectile
   :type 'string)
 
-(defcustom projectile-generic-command "find . \\! -readable -prune -o \\( -type f -print0 \\)"
+(defun projectile--detect-find-command ()
+  "Determine the appropriate default find command based on its capabilities.
+Needed because of the differences between GNU find and BSD find."
+  (if (zerop (call-process "find" nil nil nil "/dev/null" "-readable"))
+      "find . \\! -readable -prune -o \\( -type f -print0 \\)"
+      "find . \\! -perm +444 -prune -o \\( -type f -print0 \\)"))
+
+(defcustom projectile-generic-command (projectile--detect-find-command)
   "Command used by projectile to get the files in a generic project."
   :group 'projectile
   :type 'string)

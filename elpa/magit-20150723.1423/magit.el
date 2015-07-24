@@ -201,6 +201,17 @@ in the current buffer using the command `magit-toggle-margin'."
                  (const branch :tag "For branches only")
                  (const nil    :tag "Never")))
 
+(defcustom magit-visit-ref-create nil
+  "Whether `magit-visit-ref' may create new branches.
+
+When this is non-nil, then \"visiting\" a remote branch in a
+refs buffer works by creating a new local branch with tracks
+the remote branch and then checking it out the local branch."
+  :package-version '(magit . "2.1.0")
+  :group 'magit-refs
+  :group 'magit-commands
+  :type 'boolean)
+
 ;;;; Miscellaneous
 
 (defcustom magit-branch-read-upstream-first t
@@ -713,10 +724,13 @@ In most places use `magit-show-commit' to visit the reference or
 revision at point.
 
 In `magit-refs-mode', when there is a reference at point, instead
-checkout that reference.  With a prefix argument instead focus on
-the reference at point, i.e. the commit counts and cherries are
-updated to be relative to that reference, but it is not checked
-out."
+checkout that reference.  When option `magit-visit-ref-create' is
+non-nil and point is on remote branch, then create a local branch
+with the same name and check it out.
+
+With a prefix argument only focus on the reference at point, i.e.
+the commit counts and cherries are updated to be relative to that
+reference, but it is not checked out."
   (interactive)
   (if (derived-mode-p 'magit-refs-mode)
       (magit-section-case
@@ -725,8 +739,19 @@ out."
          (let ((ref (magit-section-value (magit-current-section))))
            (if current-prefix-arg
                (magit-show-refs ref)
+             (if (magit-section-when [branch remote])
+                 (let ((start ref)
+                       (arg "-b"))
+                   (string-match "^[^/]+/\\(.+\\)" ref)
+                   (setq ref (match-string 1 ref))
+                   (when (magit-branch-p ref)
+                     (if (yes-or-no-p
+                          (format "Branch %s already exists.  Recreate it?" ref))
+                         (setq arg "-B")
+                       (user-error "Abort")))
+                   (magit-run-git "checkout" arg ref start))
+               (magit-run-git "checkout" ref))
              (setcar magit-refresh-args ref)
-             (magit-run-git "checkout" ref)
              (magit-refresh))))
         ([commit * branchbuf]
          (call-interactively #'magit-show-commit)))
@@ -927,10 +952,11 @@ existing one."
      (car (member (or default (magit-current-file)) files)))))
 
 (defun magit-read-changed-file (rev-or-range prompt &optional default)
-  (let ((files (magit-changed-files rev-or-range)))
-    (magit-completing-read
-     prompt files nil t nil 'magit-read-file-hist
-     (car (member (or default (magit-current-file)) files)))))
+  (magit-read-file-choice
+   prompt
+   (magit-changed-files rev-or-range)
+   default
+   (concat "No file changed in " rev-or-range)))
 
 (defun magit-get-revision-buffer (rev file &optional create)
   (funcall (if create 'get-buffer-create 'get-buffer)
@@ -1507,6 +1533,22 @@ If FILE isn't tracked in Git fallback to using `delete-file'."
                                        (magit-list-files)
                                        nil nil initial-contents) ","))
 
+(defun magit-read-file-choice (prompt files &optional error default)
+  "Read file from FILES.
+
+If FILES has only one member, return that instead of prompting.
+If FILES has no members, give a user error.  ERROR can be given
+to provide a more informative error.
+
+If DEFAULT is non-nil, use this as the default value instead of
+`magit-current-file'."
+  (pcase (length files)
+    (0 (user-error (or error "No file choices")))
+    (1 (car files))
+    (_ (magit-completing-read
+        prompt files nil t nil 'magit-read-file-hist
+        (car (member (or default (magit-current-file)) files))))))
+
 ;;; Miscellaneous
 ;;;; Tag
 
@@ -1727,7 +1769,8 @@ the current repository."
               (?i "Init"   magit-submodule-init)
               (?u "Update" magit-submodule-update)
               (?s "Sync"   magit-submodule-sync)
-              (?f "Fetch"  magit-submodule-fetch)))
+              (?f "Fetch"  magit-submodule-fetch)
+              (?d "Deinit" magit-submodule-deinit)))
 
 ;;;###autoload
 (defun magit-submodule-add (url &optional path)
@@ -1790,6 +1833,15 @@ With a prefix argument fetch all remotes."
   (magit-with-toplevel
     (magit-run-git-async "submodule" "foreach"
                          (format "git fetch %s || true" (if all "--all" "")))))
+
+;;;###autoload
+(defun magit-submodule-deinit (path)
+  "Unregister the submodule at PATH."
+  (interactive
+   (list (magit-completing-read "Deinit module" (magit-get-submodules)
+                                nil t nil nil (magit-section-when module))))
+  (magit-with-toplevel
+    (magit-run-git-async "submodule" "deinit" path)))
 
 ;;;; Dispatch Popup
 
@@ -2016,38 +2068,58 @@ When called interactive also show the used versions of Magit,
 Git, and Emacs in the echo area."
   (interactive)
   (let ((magit-git-global-arguments nil)
-        (toplib (or load-file-name buffer-file-name)))
+        (toplib (or load-file-name buffer-file-name))
+        debug)
     (unless (and toplib
                  (equal (file-name-nondirectory toplib) "magit.el"))
       (setq toplib (locate-library "magit.el")))
+    (push toplib debug)
     (when toplib
-      (let* ((dir (file-name-directory toplib))
-             (static (expand-file-name "magit-version.el" dir))
+      (let* ((topdir (file-name-directory toplib))
              (gitdir (expand-file-name
-                      ".git" (file-name-directory (directory-file-name dir)))))
-        (cond ((file-exists-p gitdir)
-               (setq magit-version
-                     (let ((default-directory dir))
-                       (magit-git-string "describe" "--tags" "--dirty")))
-               (unless noninteractive
-                 (ignore-errors (delete-file static))))
-              ((file-exists-p static)
-               (load-file static))
-              ((featurep 'package)
-               (ignore-errors
-                 (--when-let (assq 'magit package-alist)
-                   (setq magit-version
-                         (and (fboundp 'package-desc-version)
-                              (package-version-join
-                               (package-desc-version (cadr it)))))))))))
+                      ".git" (file-name-directory
+                              (directory-file-name topdir))))
+             (static (expand-file-name "magit-version.el" topdir)))
+        (or (progn
+              (push 'repo debug)
+              (when (and (file-exists-p gitdir)
+                         ;; It is a repo, but is it the Magit repo?
+                         (file-exists-p
+                          (expand-file-name "../lisp/magit.el" gitdir)))
+                (push t debug)
+                ;; Inside the repo the version file should only exist
+                ;; while running make.
+                (unless noninteractive
+                  (ignore-errors (delete-file static)))
+                (setq magit-version
+                      (let ((default-directory topdir))
+                        (magit-git-string "describe" "--tags" "--dirty")))))
+            (progn
+              (push 'static debug)
+              (when (file-exists-p static)
+                (push t debug)
+                (load-file static)
+                magit-version))
+            (when (featurep 'package)
+              (push 'elpa debug)
+              (ignore-errors
+                (--when-let (assq 'magit package-alist)
+                  (push t debug)
+                  (setq magit-version
+                        (and (fboundp 'package-desc-version)
+                             (package-version-join
+                              (package-desc-version (cadr it)))))))))))
     (if (stringp magit-version)
         (when (called-interactively-p 'any)
           (message "Magit %s, Git %s, Emacs %s"
                    magit-version
                    (ignore-errors (substring (magit-git-string "version") 12))
                    emacs-version))
+      (setq debug (reverse debug))
       (setq magit-version 'error)
-      (message "Cannot determine Magit's version"))
+      (when magit-version
+        (push magit-version debug))
+      (message "Cannot determine Magit's version %S" debug))
     magit-version))
 
 (defun magit-startup-asserts ()
