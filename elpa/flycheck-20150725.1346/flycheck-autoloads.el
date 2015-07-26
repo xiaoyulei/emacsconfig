@@ -3,8 +3,8 @@
 ;;; Code:
 (add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads nil "flycheck" "flycheck.el" (21938 13386 630508
-;;;;;;  390000))
+;;;### (autoloads nil "flycheck" "flycheck.el" (21940 50333 718655
+;;;;;;  671000))
 ;;; Generated autoloads from flycheck.el
 
 (autoload 'flycheck-info "flycheck" "\
@@ -65,6 +65,16 @@ The following PROPERTIES constitute an error level:
 
      The severity is used by `flycheck-error-level-<' to
      determine the ordering of errors according to their levels.
+
+`:compilation-level LEVEL
+
+     A number indicating the broad class of messages that errors
+     at this level belong to: one of 0 (info), 1 (warning), or
+     2 or nil (error). Defaults to nil.
+
+     This is used by `flycheck-checker-pattern-to-error-regexp'
+     to map error levels into `compilation-mode''s hierarchy and
+     to get proper highlighting of errors in `compilation-mode'.
 
 `:overlay-category CATEGORY'
      A symbol denoting the overlay category to use for error
@@ -209,8 +219,8 @@ Use this together with the `option', `option-list' and
 
 ;;;***
 
-;;;### (autoloads nil nil ("flycheck-ert.el" "flycheck-pkg.el") (21938
-;;;;;;  13386 785490 545000))
+;;;### (autoloads nil nil ("flycheck-ert.el" "flycheck-pkg.el") (21940
+;;;;;;  50333 884148 711000))
 
 ;;;***
 
