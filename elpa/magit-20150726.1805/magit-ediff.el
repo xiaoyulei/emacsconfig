@@ -58,7 +58,7 @@ invoked using Magit."
 If non-nil, `magit-ediff-show-staged' or
 `magit-ediff-show-unstaged' are called based on what section the
 hunk is in.  Otherwise, `magit-ediff-dwim' runs
-`magit-ediff-stage' when point is on an uncommited hunk."
+`magit-ediff-stage' when point is on an uncommitted hunk."
   :package-version '(magit . "2.2.0")
   :group 'magit-ediff
   :type 'boolean)
@@ -389,12 +389,12 @@ FILE must be relative to the top directory of the repository."
 
 (defun magit-ediff-cleanup-auxiliary-buffers ()
   (let* ((ctl-buf ediff-control-buffer)
-	 (ctl-win (ediff-get-visible-buffer-window ctl-buf))
-	 (ctl-frm ediff-control-frame)
-	 (main-frame (cond ((window-live-p ediff-window-A)
-			    (window-frame  ediff-window-A))
-			   ((window-live-p ediff-window-B)
-			    (window-frame  ediff-window-B)))))
+         (ctl-win (ediff-get-visible-buffer-window ctl-buf))
+         (ctl-frm ediff-control-frame)
+         (main-frame (cond ((window-live-p ediff-window-A)
+                            (window-frame ediff-window-A))
+                           ((window-live-p ediff-window-B)
+                            (window-frame ediff-window-B)))))
     (ediff-kill-buffer-carefully ediff-diff-buffer)
     (ediff-kill-buffer-carefully ediff-custom-diff-buffer)
     (ediff-kill-buffer-carefully ediff-fine-diff-buffer)
@@ -406,9 +406,9 @@ FILE must be relative to the top directory of the repository."
       (ediff-kill-buffer-carefully ediff-patch-diagnostics))
     (cond ((and (ediff-window-display-p)
                 (frame-live-p ctl-frm))
-	   (delete-frame ctl-frm))
-	  ((window-live-p ctl-win)
-	   (delete-window ctl-win)))
+           (delete-frame ctl-frm))
+          ((window-live-p ctl-win)
+           (delete-window ctl-win)))
     (unless (ediff-multiframe-setup-p)
       (ediff-kill-bottom-toolbar))
     (ediff-kill-buffer-carefully ctl-buf)

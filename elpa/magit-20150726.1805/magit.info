@@ -276,8 +276,8 @@ is what lead to the term "apply variants").
 
    Magit isn’t just for Git experts, but it does assume some prior
 experience with Git as well as Emacs.  That being said, many users have
-reported that using Magit was what finally taught them what Git it is
-capable off and how to use it to its fullest.  Other users wished they
+reported that using Magit was what finally taught them what Git is
+capable of and how to use it to its fullest.  Other users wished they
 had switched to Emacs sooner so that they would have gotten their hands
 on Magit earlier.
 
@@ -852,13 +852,13 @@ section use the following commands.
 
      Move to the beginning of the next visible section.
 
-‘P’     (‘magit-section-backward-siblings’)
+‘M-p’     (‘magit-section-backward-siblings’)
 
      Move to the beginning of the previous sibling section.  If there is
      no previous sibling section, then move to the parent section
      instead.
 
-‘N’     (‘magit-section-forward-siblings’)
+‘M-n’     (‘magit-section-forward-siblings’)
 
      Move to the beginning of the next sibling section.  If there is no
      next sibling section, then move to the parent section instead.
@@ -5425,13 +5425,15 @@ Appendix B Keystroke Index
 * M-3:                                   Section visibility.  (line  34)
 * M-4:                                   Section visibility.  (line  34)
 * M-<tab>:                               Section visibility.  (line  17)
-* M-n:                                   Editing commit messages.
+* M-n:                                   Section movement.    (line  26)
+* M-n <1>:                               Editing commit messages.
                                                               (line  45)
-* M-n <1>:                               Editing rebase sequences.
+* M-n <2>:                               Editing rebase sequences.
                                                               (line  32)
-* M-p:                                   Editing commit messages.
+* M-p:                                   Section movement.    (line  20)
+* M-p <1>:                               Editing commit messages.
                                                               (line  39)
-* M-p <1>:                               Editing rebase sequences.
+* M-p <2>:                               Editing rebase sequences.
                                                               (line  28)
 * M-x magit-blame:                       Blaming.             (line   8)
 * M-x magit-blame-popup:                 Blaming.             (line  24)
@@ -5458,9 +5460,8 @@ Appendix B Keystroke Index
 * M-x magit-version:                     Git executable.      (line  17)
 * M-x magit-wip-commit:                  Wip Modes.           (line 109)
 * n:                                     Section movement.    (line  16)
-* N:                                     Section movement.    (line  26)
 * n <1>:                                 Blaming.             (line  55)
-* N <1>:                                 Blaming.             (line  59)
+* N:                                     Blaming.             (line  59)
 * n <2>:                                 Editing rebase sequences.
                                                               (line  24)
 * o:                                     Submodules.          (line   8)
@@ -5471,12 +5472,11 @@ Appendix B Keystroke Index
 * o s:                                   Submodules.          (line  33)
 * o u:                                   Submodules.          (line  28)
 * p:                                     Section movement.    (line  10)
-* P:                                     Section movement.    (line  20)
 * p <1>:                                 Blaming.             (line  63)
-* P <1>:                                 Blaming.             (line  67)
+* P:                                     Blaming.             (line  67)
 * p <2>:                                 Editing rebase sequences.
                                                               (line  20)
-* P <2>:                                 Pushing.             (line   8)
+* P <1>:                                 Pushing.             (line   8)
 * P e:                                   Pushing.             (line  23)
 * P m:                                   Pushing.             (line  28)
 * P o:                                   Pushing.             (line  18)
@@ -6163,18 +6163,18 @@ Appendix E Variable Index
 Tag Table:
 Node: Top1217
 Node: Introduction5279
-Node: Installation9976
-Node: Updating from an older release10351
-Node: Installing from an Elpa archive11935
-Node: Installing from the Git repository13514
-Node: Post-installation tasks15758
-Node: Getting started17193
-Node: Interface concepts22795
-Node: Modes and Buffers23121
-Node: Automatic save25221
-Node: Automatic refresh and revert26286
-Node: Sections30058
-Node: Section movement31007
+Node: Installation9972
+Node: Updating from an older release10347
+Node: Installing from an Elpa archive11931
+Node: Installing from the Git repository13510
+Node: Post-installation tasks15754
+Node: Getting started17189
+Node: Interface concepts22791
+Node: Modes and Buffers23117
+Node: Automatic save25217
+Node: Automatic refresh and revert26282
+Node: Sections30054
+Node: Section movement31003
 Node: Section visibility33558
 Node: Section hooks37149
 Node: Section types and values39187

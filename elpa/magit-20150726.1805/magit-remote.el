@@ -38,12 +38,17 @@
   "Clone the REPOSITORY to DIRECTORY."
   (interactive
    (let  ((url (magit-read-string "Clone repository")))
-     (list url (read-directory-name
-                "Clone to: " nil nil nil
-                (and (string-match "\\([^./]+\\)\\(\\.git\\)?$" url)
-                     (match-string 1 url))))))
+     (list url (file-name-as-directory
+                (expand-file-name
+                 (read-directory-name
+                  "Clone to: " nil nil nil
+                  (and (string-match "\\([^./]+\\)\\(\\.git\\)?$" url)
+                       (match-string 1 url))))))))
   (make-directory directory t)
-  (magit-run-git "clone" repository directory))
+  (message "Cloning %s..." repository)
+  (magit-call-git "clone" repository directory)
+  (message "Cloning %s...done" repository)
+  (magit-status-internal directory))
 
 ;;; Setup
 
