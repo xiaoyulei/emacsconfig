@@ -20,7 +20,7 @@
 ;;(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;;; history mode
-(add-hook 'find-file-hook 'idle-highlight-mode)
+;;(add-hook 'find-file-hook 'idle-highlight-mode)
 ;;(require 'history)
 ;;(add-to-list 'history-advised-before-functions 'push-mark t)
 ;;(history-mode)
