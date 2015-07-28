@@ -20,13 +20,13 @@
 ;;(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;;; history mode
-;;(add-hook 'find-file-hook 'idle-highlight-mode)
 ;;(require 'history)
 ;;(add-to-list 'history-advised-before-functions 'push-mark t)
 ;;(history-mode)
 ;;(global-set-key (kbd "M-,") 'history-prev-history)
 
 ;;; highlite mode
+(add-hook 'find-file-hook 'idle-highlight-mode)
 ;;(require 'highlight-symbol)
 ;;(global-set-key [(control f3)] 'highlight-symbol)
 ;;(global-set-key [f3] 'highlight-symbol-next)
