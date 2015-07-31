@@ -116,6 +116,7 @@
 ;;;;-----------------------------------
 ;;;; helm
 ;;;;-----------------------------------
+(require 'grep)
 ;;(require 'prelude-helm-everywhere)
 ;; add in modules
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
