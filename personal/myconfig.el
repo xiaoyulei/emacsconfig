@@ -83,28 +83,23 @@
 ;;-------------------------
 ;;scroll display
 ;;-------------------------
-(defun hold-line-scroll-up()
-  "Scroll the page with the cursor in the same line"
-  (interactive)
-  ;; move the cursor also
-  (let ((tmp (current-column)))
-    (scroll-up 1)
-    (line-move-to-column tmp)
-    (forward-line 1)
-    )
-  )
-(defun hold-line-scroll-down()
-  "Scroll the page with the cursor in the same line"
-  (interactive)
-  ;; move the cursor also
-  (let ((tmp (current-column)))
-    (scroll-down 1)
-    (line-move-to-column tmp)
-    (forward-line -1)
-    )
-  )
-(global-set-key (kbd "M-n") 'hold-line-scroll-up)
-(global-set-key (kbd "M-p") 'hold-line-scroll-down)
+(defun hode-line-scroll-up()
+"Scroll the page with the cursor in the same line"
+(interactive)
+(let ((next-screen-context-lines
+(count-lines
+(window-start)(window-end))))
+(scroll-up)))
+(global-set-key (kbd "M-n") 'hode-line-scroll-up)
+
+(defun hode-line-scroll-down()
+"Scroll the page with the cursor in the same line"
+(interactive)
+(let ((next-screen-context-lines
+(count-lines
+(window-start)(window-end))))
+(scroll-down)))
+(global-set-key (kbd "M-p") 'hode-line-scroll-down)
 
 ;;-----------------------------------
 ;; themes
