@@ -4,7 +4,7 @@
 
 ;; Author: Oleh Krehel <ohwoeowho@gmail.com>
 ;; URL: https://github.com/abo-abo/avy
-;; Package-Version: 20150807.606
+;; Package-Version: 20150807.648
 ;; Version: 0.3.0
 ;; Package-Requires: ((emacs "24.1") (cl-lib "0.5"))
 ;; Keywords: point, location
@@ -1044,8 +1044,13 @@ The window scope is determined by `avy-all-windows' (ARG negates it)."
         (progn
           (while (not (window-live-p
                        (cdr (setq res (ring-remove avy-ring 0))))))
-          (select-window (cdr res))
-          (goto-char (car res)))
+          (let* ((window (cdr res))
+                 (frame (window-frame window)))
+            (when (and (frame-live-p frame)
+                       (not (eq frame (selected-frame))))
+              (select-frame-set-input-focus frame))
+            (select-window window)
+            (goto-char (car res))))
       (error
        (set-mark-command 4)))))
 
