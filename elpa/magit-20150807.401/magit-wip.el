@@ -115,7 +115,14 @@ automatically whenever a buffer visiting a tracked file is saved."
 
 ;;;###autoload
 (define-minor-mode magit-wip-after-apply-mode
-  "Commit to work-in-progress refs"
+  "Commit to work-in-progress refs.
+
+After applying a change using any \"apply variant\"
+command (apply, stage, unstage, discard, and reverse) commit the
+affected files to the current wip refs.  For each branch there
+may be two wip refs; one contains snapshots of the files as found
+in the worktree and the other contains snapshots of the entries
+in the index."
   :package-version '(magit . "2.1.0")
   :group 'magit-wip
   :lighter magit-wip-after-change-mode-lighter
@@ -153,9 +160,15 @@ command which is about to be called are committed."
 (defun magit-wip-commit (&optional files msg)
   "Commit all tracked files to the work-in-progress refs.
 
+Interactively, commit all changes to all tracked files using
+a generic commit message.  With a prefix-argument the commit
+message is read in the minibuffer.
+
 Non-interactivly, on behalf of `magit-wip-before-change-hook',
 only commit changes to FILES using MSG as commit message."
-  (interactive (list nil "wip-save tracked files"))
+  (interactive (list nil (if current-prefix-arg
+                             (magit-read-string "Wip commit message")
+                           "wip-save tracked files")))
   (--when-let (magit-wip-get-ref)
     (magit-wip-commit-index it files msg)
     (magit-wip-commit-worktree it files msg)))

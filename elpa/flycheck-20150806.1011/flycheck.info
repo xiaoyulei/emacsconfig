@@ -676,6 +676,11 @@ error list:
      Move to the next error.
 ‘p’
      Move to the previous error.
+‘f’
+     Filter the list, showing only errors whose level is above a
+     threshold of your choice.
+‘F’
+     Remove all filters.
 ‘q’
      Hide the error list window.
 ‘RET’
@@ -690,6 +695,17 @@ error list:
      For instance, you can sort errors by their level by moving the
      point onto the text of the ‘Level’ column, and then pressing ‘S’.
      You can achieve the same effect by clicking on the column header.
+
+   By default, the error list shows all errors in the current buffer.
+In addition to filtering manually, you can restrict it to errors above
+certain levels with ‘flycheck-error-list-minimum-level’:
+
+ -- User Option: flycheck-error-list-minimum-level
+     The minimum level of errors to display in the error list.
+
+     If set to an error level, only displays errors whose error level is
+     at least as severe as this one in the error list.  If nil, display
+     all errors.
 
    When you move the point in the current buffer while the error list is
 visible, all errors on the current line are highlighted in the error
@@ -2759,7 +2775,8 @@ Function and variable index
 * flycheck-erlang-library-path:          Supported languages. (line 203)
 * flycheck-error:                        Reporting results.   (line  32)
 * flycheck-error-list-after-refresh-hook: Listing errors.     (line  14)
-* flycheck-error-list-highlight:         Listing errors.      (line  41)
+* flycheck-error-list-highlight:         Listing errors.      (line  57)
+* flycheck-error-list-minimum-level:     Listing errors.      (line  50)
 * flycheck-eslint-rulesdir:              Supported languages. (line 346)
 * flycheck-eslintrc:                     Supported languages. (line 348)
 * flycheck-first-error:                  Navigating errors.   (line  42)
@@ -2865,77 +2882,77 @@ Node: Navigating errors20817
 Node: Displaying errors23373
 Node: Killing errors24782
 Node: Listing errors25569
-Node: Mode line display27121
-Node: Configuring checkers28434
-Ref: Syntax checker options29150
-Ref: Syntax checker configuration files30168
-Ref: Syntax checker executables33055
-Node: Syntax checker definitions34259
-Node: Defining syntax checkers35440
-Node: Finding error patterns39659
-Node: Trying new checkers41203
-Node: Registering new checkers41888
-Node: Parsing structured output43436
-Node: Passing configuration to checkers44679
-Node: Controlling use of checkers48283
-Node: Applying multiple checkers49385
-Node: Flycheck hooks52638
-Node: Flycheck API54271
-Node: Command syntax checkers54609
-Node: Argument Substitution54979
-Node: Checker configuration55149
-Node: Error parsers55361
-Node: Errors55507
-Node: Supported languages55619
-Ref: language-Ada56828
-Ref: language-AsciiDoc57452
-Ref: language-C/C++57535
-Ref: language-CFEngine60136
-Ref: language-Chef60204
-Ref: language-Coffeescript60449
-Ref: language-Coq60849
-Ref: language-CSS60905
-Ref: language-D61015
-Ref: language-Emacs Lisp61460
-Ref: language-Erlang62588
-Ref: language-ERuby62842
-Ref: language-Fortran62937
-Ref: language-Go63830
-Ref: language-Haml64580
-Ref: language-Handlebars64649
-Ref: language-Haskell64731
-Ref: language-HTML66402
-Ref: language-Jade66699
-Ref: language-Javascript66778
-Ref: language-JSON68140
-Ref: language-Less68226
-Ref: language-Lua68283
-Ref: language-Perl68641
-Ref: language-PHP69176
-Ref: language-Puppet69868
-Ref: language-Python70050
-Ref: language-R71334
-Ref: language-Racket71771
-Ref: language-RPM Spec71846
-Ref: language-reStructuredText71960
-Ref: language-Ruby72349
-Ref: language-Rust73360
-Ref: language-Sass74298
-Ref: language-Scala74551
-Ref: language-SCSS75158
-Ref: language-Shell scripting languages75718
-Ref: language-Slim76454
-Ref: language-SQL76519
-Ref: language-TeX/LaTeX76616
-Ref: language-Texinfo77028
-Ref: language-Verilog77123
-Ref: language-XML77438
-Ref: language-YAML77606
-Node: Issues77745
-Node: GNU Free Documentation License78766
-Node: Main Index104113
-Node: Key Index112384
-Node: Function and Variable Index113892
+Node: Mode line display27739
+Node: Configuring checkers29052
+Ref: Syntax checker options29768
+Ref: Syntax checker configuration files30786
+Ref: Syntax checker executables33673
+Node: Syntax checker definitions34877
+Node: Defining syntax checkers36058
+Node: Finding error patterns40277
+Node: Trying new checkers41821
+Node: Registering new checkers42506
+Node: Parsing structured output44054
+Node: Passing configuration to checkers45297
+Node: Controlling use of checkers48901
+Node: Applying multiple checkers50003
+Node: Flycheck hooks53256
+Node: Flycheck API54889
+Node: Command syntax checkers55227
+Node: Argument Substitution55597
+Node: Checker configuration55767
+Node: Error parsers55979
+Node: Errors56125
+Node: Supported languages56237
+Ref: language-Ada57446
+Ref: language-AsciiDoc58070
+Ref: language-C/C++58153
+Ref: language-CFEngine60754
+Ref: language-Chef60822
+Ref: language-Coffeescript61067
+Ref: language-Coq61467
+Ref: language-CSS61523
+Ref: language-D61633
+Ref: language-Emacs Lisp62078
+Ref: language-Erlang63206
+Ref: language-ERuby63460
+Ref: language-Fortran63555
+Ref: language-Go64448
+Ref: language-Haml65198
+Ref: language-Handlebars65267
+Ref: language-Haskell65349
+Ref: language-HTML67020
+Ref: language-Jade67317
+Ref: language-Javascript67396
+Ref: language-JSON68758
+Ref: language-Less68844
+Ref: language-Lua68901
+Ref: language-Perl69259
+Ref: language-PHP69794
+Ref: language-Puppet70486
+Ref: language-Python70668
+Ref: language-R71952
+Ref: language-Racket72389
+Ref: language-RPM Spec72464
+Ref: language-reStructuredText72578
+Ref: language-Ruby72967
+Ref: language-Rust73978
+Ref: language-Sass74916
+Ref: language-Scala75169
+Ref: language-SCSS75776
+Ref: language-Shell scripting languages76336
+Ref: language-Slim77072
+Ref: language-SQL77137
+Ref: language-TeX/LaTeX77234
+Ref: language-Texinfo77646
+Ref: language-Verilog77741
+Ref: language-XML78056
+Ref: language-YAML78224
+Node: Issues78363
+Node: GNU Free Documentation License79384
+Node: Main Index104731
+Node: Key Index113002
+Node: Function and Variable Index114510
 
 End Tag Table
 
