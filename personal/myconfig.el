@@ -303,4 +303,12 @@
 (prelude-require-package 'helm-swoop)
 (global-set-key (kbd "C-c w") 'helm-swoop)
 
+;;-----------------------------------
+;; helm-ag
+;;-----------------------------------
+(custom-set-variables
+ '(helm-ag-base-command "ag --nogroup --ignore-case")
+ '(helm-ag-command-option "--all-text")
+ '(helm-ag-insert-at-point 'symbol))
+
 
