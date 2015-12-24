@@ -318,7 +318,7 @@
        ((:url . "http://elpa.gnu.org/packages/fsm.html")
 	(:keywords "extensions"))])
  (ggtags .
-	 [(0 8 10)
+	 [(0 8 11)
 	  ((emacs
 	    (24))
 	   (cl-lib
@@ -530,7 +530,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20151214)
+      [(20151221)
        nil "Outline-based notes management and organizer" tar nil])
  (osc .
       [(0 1)
