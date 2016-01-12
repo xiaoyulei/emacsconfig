@@ -80,8 +80,6 @@ Installation
 Interface concepts
 
 * Modes and Buffers::
-* Automatic save::
-* Automatic refresh and revert::
 * Sections::
 * Popup buffers and prefix commands::
 * Completion and confirmation::
@@ -92,6 +90,9 @@ Modes and Buffers
 * Switching Buffers::
 * Naming Buffers::
 * Quitting Windows::
+* Automatic Refreshing of Magit Buffers::
+* Automatic Saving of File-Visiting Buffers::
+* Automatic Reverting of File-Visiting Buffers::
 
 Sections
 
@@ -644,15 +645,13 @@ File: magit.info,  Node: Interface concepts,  Next: Inspecting,  Prev: Getting s
 * Menu:
 
 * Modes and Buffers::
-* Automatic save::
-* Automatic refresh and revert::
 * Sections::
 * Popup buffers and prefix commands::
 * Completion and confirmation::
 * Running Git::
 
 
-File: magit.info,  Node: Modes and Buffers,  Next: Automatic save,  Up: Interface concepts
+File: magit.info,  Node: Modes and Buffers,  Next: Sections,  Up: Interface concepts
 
 4.1 Modes and Buffers
 =====================
@@ -692,6 +691,9 @@ buffers whose major-modes derive from ‘magit-mode’.
 * Switching Buffers::
 * Naming Buffers::
 * Quitting Windows::
+* Automatic Refreshing of Magit Buffers::
+* Automatic Saving of File-Visiting Buffers::
+* Automatic Reverting of File-Visiting Buffers::
 
 
 File: magit.info,  Node: Switching Buffers,  Next: Naming Buffers,  Up: Modes and Buffers
@@ -842,7 +844,7 @@ File: magit.info,  Node: Naming Buffers,  Next: Quitting Windows,  Prev: Switchi
      control how buffer names are uniquified.
 
 
-File: magit.info,  Node: Quitting Windows,  Prev: Naming Buffers,  Up: Modes and Buffers
+File: magit.info,  Node: Quitting Windows,  Next: Automatic Refreshing of Magit Buffers,  Prev: Naming Buffers,  Up: Modes and Buffers
 
 4.1.3 Quitting Windows
 ----------------------
@@ -883,10 +885,66 @@ File: magit.info,  Node: Quitting Windows,  Prev: Naming Buffers,  Up: Modes and
      that was ever displayed in the window, then that is deleted.
 
 
-File: magit.info,  Node: Automatic save,  Next: Automatic refresh and revert,  Prev: Modes and Buffers,  Up: Interface concepts
+File: magit.info,  Node: Automatic Refreshing of Magit Buffers,  Next: Automatic Saving of File-Visiting Buffers,  Prev: Quitting Windows,  Up: Modes and Buffers
 
-4.2 Automatic save
-==================
+4.1.4 Automatic Refreshing of Magit Buffers
+-------------------------------------------
+
+After running a command which may change the state of the current
+repository, the current Magit buffer and the corresponding status buffer
+are refreshed.  Status buffer may optionally be automatically refreshed
+whenever a buffer is saved to a file inside the respective repository.
+
+   Automatically refreshing Magit buffers ensures that the displayed
+information is up-to-date most of the time but can lead to a noticeable
+delay in big repositories.  Other Magit buffers are not refreshed to
+keep the delay to a minimum and also because doing so can sometimes be
+undesirable.
+
+   Buffers can also be refreshed explicitly, which is useful in buffers
+that weren’t current during the last refresh and after changes were made
+to the repository outside of Magit.
+
+‘g’     (‘magit-refresh’)
+
+     This command refreshes the current buffer if its major mode derives
+     from ‘magit-mode’ as well as the corresponding status buffer.
+
+     If the option ‘magit-revert-buffers’ calls for it, then it also
+     reverts all unmodified buffers that visit files being tracked in
+     the current repository.
+
+‘G’     (‘magit-refresh-all’)
+
+     This command refreshes all Magit buffers belonging to the current
+     repository and also reverts all unmodified buffers that visit files
+     being tracked in the current repository.
+
+     The file-visiting buffers are always reverted, even if
+     ‘magit-revert-buffers’ is nil.
+
+ -- Function: magit-after-save-refresh-status
+
+     This function is intended to be added to ‘after-save-hook’.  After
+     doing that the corresponding status buffer is refreshed whenever a
+     buffer is saved to a file inside a repository.
+
+     Note that refreshing a Magit buffer is done by re-creating its
+     contents from scratch, which can be slow in large repositories.  If
+     you are not satisfied with Magit’s performance, then you should
+     obviously not add this function to that hook.
+
+ -- User Option: magit-refresh-buffer-hook
+
+     This hook is run in each Magit buffer that was refreshed during the
+     current refresh - normally the current buffer and the status
+     buffer.
+
+
+File: magit.info,  Node: Automatic Saving of File-Visiting Buffers,  Next: Automatic Reverting of File-Visiting Buffers,  Prev: Automatic Refreshing of Magit Buffers,  Up: Modes and Buffers
+
+4.1.5 Automatic Saving of File-Visiting Buffers
+-----------------------------------------------
 
 File-visiting buffers are by default saved at certain points in time.
 This doesn’t guarantee that Magit buffers are always up-to-date, but,
@@ -908,21 +966,17 @@ explicitly.
      confirm each save.
 
 
-File: magit.info,  Node: Automatic refresh and revert,  Next: Sections,  Prev: Automatic save,  Up: Interface concepts
+File: magit.info,  Node: Automatic Reverting of File-Visiting Buffers,  Prev: Automatic Saving of File-Visiting Buffers,  Up: Modes and Buffers
 
-4.3 Automatic refresh and revert
-================================
+4.1.6 Automatic Reverting of File-Visiting Buffers
+--------------------------------------------------
 
-After running a command which may change the state of the current
-repository, the current Magit buffer and the corresponding status buffer
-are refreshed.  Status buffer may optionally be automatically refreshed
-whenever a buffer is saved to a file inside the respective repository.
-
-   Automatically refreshing Magit buffers ensures that the displayed
-information is up-to-date most of the time but can lead to a noticeable
-delay in big repositories.  Other Magit buffers are not refreshed to
-keep the delay to a minimum and also because doing so can sometimes be
-undesirable.
+By default Magit automatically reverts buffers that are visiting files
+that are being tracked in the current Git repository, after running a
+Git command changed the visited file on disk.  This is useful because it
+makes it possible to continue editing a buffer after e.g.  performing a
+merge, without having to type ‘M-x revert-buffer RET RET’, in each of
+the affected buffers.
 
  -- User Option: magit-revert-buffers
 
@@ -980,45 +1034,6 @@ undesirable.
      Reverting untracked files should be safe and limiting to only
      tracked files has the potential of causing very noticable delays.
 
-   Buffers can also be refreshed explicitly, which is useful in buffers
-that weren’t current during the last refresh and after changes were made
-to the repository outside of Magit.
-
-‘g’     (‘magit-refresh’)
-
-     This command refreshes the current buffer if its major mode derives
-     from ‘magit-mode’ as well as the corresponding status buffer.
-
-     If the option ‘magit-revert-buffers’ calls for it, then it also
-     reverts all unmodified buffers that visit files being tracked in
-     the current repository.
-
-‘G’     (‘magit-refresh-all’)
-
-     This command refreshes all Magit buffers belonging to the current
-     repository and also reverts all unmodified buffers that visit files
-     being tracked in the current repository.
-
-     The file-visiting buffers are always reverted, even if
-     ‘magit-revert-buffers’ is nil.
-
- -- Function: magit-after-save-refresh-status
-
-     This function is intended to be added to ‘after-save-hook’.  After
-     doing that the corresponding status buffer is refreshed whenever a
-     buffer is saved to a file inside a repository.
-
-     Note that refreshing a Magit buffer is done by re-creating its
-     contents from scratch, which can be slow in large repositories.  If
-     you are not satisfied with Magit’s performance, then you should
-     obviously not add this function to that hook.
-
- -- User Option: magit-refresh-buffer-hook
-
-     This hook is run in each Magit buffer that was refreshed during the
-     current refresh - normally the current buffer and the status
-     buffer.
-
  -- User Option: magit-after-revert-hook
 
      This hook is run in each file-visiting buffer belonging to the
@@ -1037,10 +1052,21 @@ to the repository outside of Magit.
      have to do anything.  This hook is intended for third-party
      extensions that need to run some functions even on such files.
 
-
-File: magit.info,  Node: Sections,  Next: Popup buffers and prefix commands,  Prev: Automatic refresh and revert,  Up: Interface concepts
+ -- Function: magit-refresh-vc-mode-line
 
-4.4 Sections
+     This function updates the information displayed by ‘vc-mode’ in the
+     mode-line.  This is a simpler, more efficient, and less buggy
+     substitute for ‘vc-mode-line’.
+
+     This function is intended to be added to ‘magit-after-revert-hook’
+     and ‘magit-not-reverted-hook’.  It isn’t part of the default value
+     of these hooks because, even though it is faster than, VC’s variant
+     it is still to slow if many file-visiting buffers are open.
+
+
+File: magit.info,  Node: Sections,  Next: Popup buffers and prefix commands,  Prev: Modes and Buffers,  Up: Interface concepts
+
+4.2 Sections
 ============
 
 Magit buffers are organized into nested sections, which can be collapsed
@@ -1067,7 +1093,7 @@ type keymaps.
 
 File: magit.info,  Node: Section movement,  Next: Section visibility,  Up: Sections
 
-4.4.1 Section movement
+4.2.1 Section movement
 ----------------------
 
 To move within a section use the usual keys (‘C-p’, ‘C-n’, ‘C-b’, ‘C-f’
@@ -1169,7 +1195,7 @@ hook’s default value.
 
 File: magit.info,  Node: Section visibility,  Next: Section hooks,  Prev: Section movement,  Up: Sections
 
-4.4.2 Section visibility
+4.2.2 Section visibility
 ------------------------
 
 Magit provides many commands for changing the visibility of sections,
@@ -1267,7 +1293,7 @@ certain sections can also be overwritten using the hook
 
 File: magit.info,  Node: Section hooks,  Next: Section types and values,  Prev: Section visibility,  Up: Sections
 
-4.4.3 Section hooks
+4.2.3 Section hooks
 -------------------
 
 Which sections are inserted into certain buffers is controlled with
@@ -1315,7 +1341,7 @@ this manual along with the appropriate "section inserter functions".
 
 File: magit.info,  Node: Section types and values,  Next: Section options,  Prev: Section hooks,  Up: Sections
 
-4.4.4 Section types and values
+4.2.4 Section types and values
 ------------------------------
 
 Each section has a type, for example ‘hunk’, ‘file’, and ‘commit’.
@@ -1344,7 +1370,7 @@ and it will automatically be used.
 
 File: magit.info,  Node: Section options,  Prev: Section types and values,  Up: Sections
 
-4.4.5 Section options
+4.2.5 Section options
 ---------------------
 
 This section describes options that have an effect on more than just a
@@ -1358,7 +1384,7 @@ certain type of sections.  As you can see there are not many of those.
 
 File: magit.info,  Node: Popup buffers and prefix commands,  Next: Completion and confirmation,  Prev: Sections,  Up: Interface concepts
 
-4.5 Popup buffers and prefix commands
+4.3 Popup buffers and prefix commands
 =====================================
 
 Many Magit commands are implemented using *popup buffers*.  First the
@@ -1389,7 +1415,7 @@ you should setup a global binding:
 
 File: magit.info,  Node: Completion and confirmation,  Next: Running Git,  Prev: Popup buffers and prefix commands,  Up: Interface concepts
 
-4.6 Completion and confirmation
+4.4 Completion and confirmation
 ===============================
 
 Many commands read a value from the user.  By default this is done using
@@ -1454,7 +1480,7 @@ option when acting on a single section.
 
 File: magit.info,  Node: Running Git,  Prev: Completion and confirmation,  Up: Interface concepts
 
-4.7 Running Git
+4.5 Running Git
 ===============
 
 * Menu:
@@ -1467,7 +1493,7 @@ File: magit.info,  Node: Running Git,  Prev: Completion and confirmation,  Up: I
 
 File: magit.info,  Node: Viewing Git output,  Next: Running Git manually,  Up: Running Git
 
-4.7.1 Viewing Git output
+4.5.1 Viewing Git output
 ------------------------
 
 Magit runs Git either for side-effects (e.g.  when pushing) or to get
@@ -1496,7 +1522,7 @@ sections are available.  There is one additional command.
 
 File: magit.info,  Node: Running Git manually,  Next: Git executable,  Prev: Viewing Git output,  Up: Running Git
 
-4.7.2 Running Git manually
+4.5.2 Running Git manually
 --------------------------
 
 While Magit provides many Emacs commands to interact with Git, it does
@@ -1559,7 +1585,7 @@ begin with the subcommand, "git" is assumed.
 
 File: magit.info,  Node: Git executable,  Next: Global Git arguments,  Prev: Running Git manually,  Up: Running Git
 
-4.7.3 Git executable
+4.5.3 Git executable
 --------------------
 
 Except on MS Windows, Magit defaults to running Git without specifying
@@ -1601,7 +1627,7 @@ a non-Windows machine, then you must change the value to "git".
 
 File: magit.info,  Node: Global Git arguments,  Prev: Git executable,  Up: Running Git
 
-4.7.4 Global Git arguments
+4.5.4 Global Git arguments
 --------------------------
 
  -- User Option: magit-git-global-arguments
@@ -5240,14 +5266,15 @@ Nevertheless, ‘trash’ isn’t a member of ‘magit-no-confirm’ - you might
 want to change that.
 
    Buffers visiting files tracked in the current repository are being
-refreshed before certain actions.  See *note Automatic refresh and
-revert: Automatic refresh and revert.  This isn’t as risky as it might
-seem.  If a buffer is modified (i.e.  it contains changes that haven’t
-been saved yet), then Emacs/Magit would refuse to revert it.  If the
-buffer has been saved resulting in what is seen by Git as an uncommitted
-change, then Git in turn would refuse to carry out the action that would
-cause these changes to be lost.  Since Git doesn’t do anything, the file
-doesn’t change on disk, and Emacs/Magit has nothing to revert.
+reverted after certain actions.  See *note Automatic Reverting of
+File-Visiting Buffers: Automatic Reverting of File-Visiting Buffers.
+This isn’t as risky as it might seem.  If a buffer is modified (i.e.  it
+contains changes that haven’t been saved yet), then Emacs/Magit would
+refuse to revert it.  If the buffer has been saved resulting in what is
+seen by Git as an uncommitted change, then Git in turn would refuse to
+carry out the action that would cause these changes to be lost.  Since
+Git doesn’t do anything, the file doesn’t change on disk, and
+Emacs/Magit has nothing to revert.
 
    However if you do modify some files, visit the respective files in
 Emacs, somehow discard the changes (not using Magit and probably even
@@ -6698,10 +6725,10 @@ Appendix B Keystroke Index
 * F p:                                   Pulling.             (line  13)
 * f u:                                   Fetching.            (line  17)
 * F u:                                   Pulling.             (line  17)
-* g:                                     Automatic refresh and revert.
-                                                              (line  77)
-* G:                                     Automatic refresh and revert.
-                                                              (line  86)
+* g:                                     Automatic Refreshing of Magit Buffers.
+                                                              (line  21)
+* G:                                     Automatic Refreshing of Magit Buffers.
+                                                              (line  30)
 * j:                                     Diff buffer.         (line  38)
 * k:                                     Viewing Git output.  (line  19)
 * k <1>:                                 Applying.            (line  37)
@@ -7167,10 +7194,10 @@ Appendix C Command Index
 * magit-reflog-current:                  Reflog.              (line  11)
 * magit-reflog-head:                     Reflog.              (line  19)
 * magit-reflog-other:                    Reflog.              (line  15)
-* magit-refresh:                         Automatic refresh and revert.
-                                                              (line  77)
-* magit-refresh-all:                     Automatic refresh and revert.
-                                                              (line  86)
+* magit-refresh:                         Automatic Refreshing of Magit Buffers.
+                                                              (line  21)
+* magit-refresh-all:                     Automatic Refreshing of Magit Buffers.
+                                                              (line  30)
 * magit-remote-add:                      Remotes.             (line  13)
 * magit-remote-popup:                    Remotes.             (line   8)
 * magit-remote-remove:                   Remotes.             (line  28)

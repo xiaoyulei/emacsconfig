@@ -4202,9 +4202,6 @@ universal prefix arg, and only the id with normal prefix arg."
       (seq-do #'kill-new (reverse messages))
       (message (string-join messages "\n")))))
 
-(define-obsolete-function-alias 'flycheck-copy-messages-as-kill
-  'flycheck-copy-errors-as-kill "0.22")
-
 
 ;;; Syntax checkers using external commands
 (defun flycheck-command-argument-p (arg)
@@ -7184,14 +7181,17 @@ the `--severity' option to Perl Critic."
   :safe #'integerp
   :package-version '(flycheck . "0.18"))
 
-(define-obsolete-variable-alias 'flycheck-perlcritic-verbosity
-  'flycheck-perlcritic-severity "0.22")
+(flycheck-def-config-file-var flycheck-perlcriticrc perl-perlcritic
+                              ".perlcriticrc"
+  :safe #'stringp
+  :package-version '(flycheck . "0.26"))
 
 (flycheck-define-checker perl-perlcritic
   "A Perl syntax checker using Perl::Critic.
 
 See URL `https://metacpan.org/pod/Perl::Critic'."
   :command ("perlcritic" "--no-color" "--verbose" "%f/%l/%c/%s/%p/%m (%e)\n"
+            (config-file "--profile" flycheck-perlcriticrc)
             (option "--severity" flycheck-perlcritic-severity nil
                     flycheck-option-int))
   :standard-input t
@@ -7314,7 +7314,8 @@ See URL `http://puppetlabs.com/'."
 
 (flycheck-def-config-file-var flycheck-puppet-lint-rc puppet-lint
                               ".puppet-lint.rc"
-  :safe #'stringp)
+  :safe #'stringp
+  :package-version '(flycheck . "0.26"))
 
 (flycheck-def-option-var flycheck-puppet-lint-disabled-checks nil puppet-lint
   "Disabled checkers for `puppet-lint'.
@@ -7326,7 +7327,7 @@ string is the name of a check to disable (e.g. \"80chars\" or
 See URL `http://puppet-lint.com/checks/' for a list of all checks
 and their names."
   :type '(repeat (string :tag "Check Name"))
-  :package-version '(flycheck . "0.25"))
+  :package-version '(flycheck . "0.26"))
 
 (defun flycheck-puppet-lint-disabled-arg-name (check)
   "Create an argument to disable a puppetlint CHECK."

@@ -32,7 +32,7 @@
 ;; Maintainer: Jason R. Blevins <jrblevin@sdf.org>
 ;; Created: May 24, 2007
 ;; Version: 2.1
-;; Package-Version: 20160110.715
+;; Package-Version: 20160111.648
 ;; Package-Requires: ((cl-lib "0.5"))
 ;; Keywords: Markdown, GitHub Flavored Markdown, itex
 ;; URL: http://jblevins.org/projects/markdown-mode/
@@ -95,7 +95,6 @@
 ;;    * Ubuntu Linux: [elpa-markdown-mode][elpa-ubuntu] and [emacs-goodies-el][emacs-goodies-el-ubuntu]
 ;;    * RedHat and Fedora Linux: [emacs-goodies][]
 ;;    * NetBSD: [textproc/markdown-mode][]
-;;    * Arch Linux (AUR): [emacs-markdown-mode-git][]
 ;;    * MacPorts: [markdown-mode.el][macports-package] ([pending][macports-ticket])
 ;;    * FreeBSD: [textproc/markdown-mode.el][freebsd-port]
 ;;
@@ -105,7 +104,6 @@
 ;;  [emacs-goodies-el-ubuntu]: http://packages.ubuntu.com/search?keywords=emacs-goodies-el
 ;;  [emacs-goodies]: https://apps.fedoraproject.org/packages/emacs-goodies
 ;;  [textproc/markdown-mode]: http://pkgsrc.se/textproc/markdown-mode
-;;  [emacs-markdown-mode-git]: https://aur.archlinux.org/packages/emacs-goodies-el/
 ;;  [macports-package]: https://trac.macports.org/browser/trunk/dports/editors/markdown-mode.el/Portfile
 ;;  [macports-ticket]: http://trac.macports.org/ticket/35716
 ;;  [freebsd-port]: http://svnweb.freebsd.org/ports/head/textproc/markdown-mode.el
@@ -503,10 +501,12 @@
 ;;     demotion, keep these sorted from largest to smallest.
 ;;
 ;;   * `markdown-bold-underscore' - set to a non-nil value to use two
-;;     underscores for bold instead of two asterisks (default: `nil').
+;;     underscores when inserting bold text instead of two asterisks
+;;     (default: `nil').
 ;;
 ;;   * `markdown-italic-underscore' - set to a non-nil value to use
-;;     underscores for italic instead of asterisks (default: `nil').
+;;     underscores when inserting italic text instead of asterisks
+;;     (default: `nil').
 ;;
 ;;   * `markdown-asymmetric-header' - set to a non-nil value to use
 ;;     asymmetric header styling, placing header characters only on
@@ -946,12 +946,12 @@ promotion and demotion functions."
   :type 'list)
 
 (defcustom markdown-bold-underscore nil
-  "Use two underscores for bold instead of two asterisks."
+  "Use two underscores when inserting bold text instead of two asterisks."
   :group 'markdown
   :type 'boolean)
 
 (defcustom markdown-italic-underscore nil
-  "Use underscores for italic instead of asterisks."
+  "Use underscores when inserting italic text instead of asterisks."
   :group 'markdown
   :type 'boolean)
 
@@ -1101,6 +1101,12 @@ curly braces. They may be of arbitrary capitalization, though."
   :group 'markdown
   :type 'boolean)
 
+(defcustom markdown-gfm-downcase-languages t
+  "Downcase suggested languages when inserting them to code blocks with
+`markdown-electric-backquote'."
+  :group 'markdown
+  :type 'boolean)
+
 
 ;;; Regular Expressions =======================================================
 
@@ -1154,7 +1160,14 @@ Group 3 matches the closing square bracket.")
 
 (defconst markdown-regex-header
   "^\\(?:\\(.+\\)\n\\(=+\\)\\|\\(.+\\)\n\\(-+\\)\\|\\(#+\\)\\s-*\\(.*?\\)\\s-*?\\(#*\\)\\)$"
-  "Regexp identifying Markdown headers.")
+  "Regexp identifying Markdown headings.
+Group 1 matches the text of a level-1 setext heading.
+Group 2 matches the underline of a level-1 setext heading.
+Group 3 matches the text of a level-1 setext heading.
+Group 4 matches the underline of a level-1 setext heading.
+Group 5 matches the opening hash marks of an atx heading.
+Group 6 matches the text, without surrounding whitespace, of an atx heading.
+Group 7 matches the closing hash marks of an atx heading.")
 
 (defconst markdown-regex-header-1-atx
   "^\\(#\\)[ \t]*\\([^\\.].*?\\)[ \t]*\\(#*\\)$"
@@ -3041,16 +3054,17 @@ header text is determined."
   (interactive "*P")
   (let (level)
     (save-excursion
-      (when (re-search-backward markdown-regex-header nil t)
-        ;; level of previous header
+      (when (or (thing-at-point-looking-at markdown-regex-header)
+                (re-search-backward markdown-regex-header nil t))
+        ;; level of current or previous header
         (setq level (markdown-outline-level))
-        ;; match groups 1 and 2 indicate setext headers
+        ;; match groups 1 and 3 indicate setext headers
         (setq setext (or setext (match-end 1) (match-end 3)))))
     ;; check prefix argument
     (cond
-     ((and (equal arg '(4)) (> level 1)) ;; C-u
+     ((and (equal arg '(4)) level (> level 1)) ;; C-u
       (cl-decf level))
-     ((and (equal arg '(16)) (< level 6)) ;; C-u C-u
+     ((and (equal arg '(16)) level (< level 6)) ;; C-u C-u
       (cl-incf level))
      (arg ;; numeric prefix
       (setq level (prefix-numeric-value arg))))
@@ -3280,9 +3294,12 @@ already in `markdown-gfm-recognized-languages' or
 
 (defun markdown-gfm-get-corpus ()
   "Create corpus of recognized GFM code block languages for the given buffer."
-  (append markdown-gfm-used-languages
-          markdown-gfm-additional-languages
-          markdown-gfm-recognized-languages))
+  (let ((given-corpus (append markdown-gfm-additional-languages
+                              markdown-gfm-recognized-languages)))
+    (append
+     markdown-gfm-used-languages
+     (if markdown-gfm-downcase-languages (cl-mapcar #'downcase given-corpus)
+       given-corpus))))
 
 (defun markdown-add-language-if-new (lang)
   (let* ((cleaned-lang (markdown-clean-language-string lang))
@@ -3300,16 +3317,14 @@ the region boundaries are not on empty lines, these are added
 automatically in order to have the correct markup."
   (interactive
    (list (let ((completion-ignore-case nil))
-           (condition-case _err
+           (condition-case nil
                (markdown-clean-language-string
                 (completing-read
                  (format "Programming language [%s]: "
                          (or markdown-gfm-last-used-language "none"))
                  (markdown-gfm-get-corpus)
                  nil 'confirm nil
-                 'markdown-gfm-language-history
-                 (or markdown-gfm-last-used-language
-                     (car markdown-gfm-additional-languages))))
+                 'markdown-gfm-language-history))
              (quit "")))))
   (unless (string= lang "") (markdown-add-language-if-new lang))
   (when (> (length lang) 0) (setq lang (concat " " lang)))
