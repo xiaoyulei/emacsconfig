@@ -833,7 +833,7 @@
 	     ((:keywords "convenience" "emulation")
 	      (:url . "http://github.com/capitaomorte/yasnippet"))])
  (ztree .
-	[(1 0 2)
+	[(1 0 3)
 	 ((cl-lib
 	   (0)))
 	 "Text mode directory tree" tar
