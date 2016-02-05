@@ -68,7 +68,7 @@
 	 ((:keywords "async")
 	  (:url . "http://elpa.gnu.org/packages/async.html"))])
  (auctex .
-	 [(11 89)
+	 [(11 89 1)
 	  nil "Integrated environment for *TeX*" tar
 	  ((:url . "http://www.gnu.org/software/auctex/"))])
  (aumix-mode .
@@ -217,7 +217,7 @@
 	     ((:url . "http://www.dr-qubit.org/emacs.php")
 	      (:keywords "extensions" "matching" "data structures trie" "tree" "dictionary" "completion" "regexp"))])
  (diff-hl .
-	  [(1 8 2)
+	  [(1 8 3)
 	   ((cl-lib
 	     (0 2)))
 	   "Highlight uncommitted changes using VC" tar
@@ -492,7 +492,7 @@
 	   ((:url . "http://elpa.gnu.org/packages/minimap.html")
 	    (:keywords))])
  (multishell .
-	     [(1 1 1)
+	     [(1 1 2)
 	      nil "facilitate multiple local and remote shell buffers" tar
 	      ((:keywords "processes")
 	       (:url . "https://github.com/kenmanheimer/EmacsMultishell"))])
@@ -559,7 +559,7 @@
 	     ((:url . "https://github.com/michael-heerdegen/on-screen.el")
 	      (:keywords "convenience"))])
  (org .
-      [(20160125)
+      [(20160201)
        nil "Outline-based notes management and organizer" tar nil])
  (osc .
       [(0 1)
