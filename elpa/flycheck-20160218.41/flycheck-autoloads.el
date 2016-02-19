@@ -3,8 +3,8 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "flycheck" "flycheck.el" (22213 8135 769015
-;;;;;;  999000))
+;;;### (autoloads nil "flycheck" "flycheck.el" (22214 32265 973953
+;;;;;;  167000))
 ;;; Generated autoloads from flycheck.el
 
 (autoload 'flycheck-info "flycheck" "\
@@ -33,7 +33,7 @@ buffer manually.
 \(fn &optional ARG)" t nil)
 
 (defvar global-flycheck-mode nil "\
-Non-nil if Global-Flycheck mode is enabled.
+Non-nil if Global Flycheck mode is enabled.
 See the command `global-flycheck-mode' for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
@@ -43,7 +43,7 @@ or call the function `global-flycheck-mode'.")
 
 (autoload 'global-flycheck-mode "flycheck" "\
 Toggle Flycheck mode in all buffers.
-With prefix ARG, enable Global-Flycheck mode if ARG is positive;
+With prefix ARG, enable Global Flycheck mode if ARG is positive;
 otherwise, disable it.  If called from Lisp, enable the mode if
 ARG is omitted or nil.
 
@@ -227,7 +227,7 @@ Use this together with the `option', `option-list' and
 ;;;***
 
 ;;;### (autoloads nil nil ("flycheck-buttercup.el" "flycheck-ert.el"
-;;;;;;  "flycheck-pkg.el") (22213 8135 765015 999000))
+;;;;;;  "flycheck-pkg.el") (22214 32265 969953 167000))
 
 ;;;***
 
