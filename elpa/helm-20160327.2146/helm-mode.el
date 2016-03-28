@@ -402,7 +402,7 @@ that use `helm-comp-read' See `helm-M-x' for example."
                       . (lambda (candidate)
                           (if ,marked-candidates
                               (helm-marked-candidates)
-                            (identity candidate)))))))
+                              (identity candidate)))))))
     ;; Assume completion have been already required,
     ;; so always use 'confirm.
     (when (eq must-match 'confirm-after-completion)

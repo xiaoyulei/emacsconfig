@@ -33,7 +33,7 @@
 ;; Maintainer: Jason R. Blevins <jrblevin@sdf.org>
 ;; Created: May 24, 2007
 ;; Version: 2.1
-;; Package-Version: 20160313.1318
+;; Package-Version: 20160326.635
 ;; Package-Requires: ((emacs "24") (cl-lib "0.5"))
 ;; Keywords: Markdown, GitHub Flavored Markdown, itex
 ;; URL: http://jblevins.org/projects/markdown-mode/
@@ -2832,11 +2832,19 @@ Return nil otherwise."
 (defun markdown-match-bold (last)
   "Match inline bold from the point to LAST."
   (when (markdown-match-inline-generic markdown-regex-bold last)
-    (set-match-data (list (match-beginning 2) (match-end 2)
+    (let ((begin (match-beginning 2)) (end (match-end 2)))
+      (cond
+       ((markdown-range-property-any
+         begin end 'face (list markdown-inline-code-face
+                               markdown-math-face))
+        (goto-char (1+ (match-end 0)))
+        (markdown-match-bold last))
+       (t
+        (set-match-data (list (match-beginning 2) (match-end 2)
                           (match-beginning 3) (match-end 3)
                           (match-beginning 4) (match-end 4)
                           (match-beginning 5) (match-end 5)))
-    (goto-char (1+ (match-end 0)))))
+        (goto-char (1+ (match-end 0))))))))
 
 (defun markdown-match-italic (last)
   "Match inline italics from the point to LAST."

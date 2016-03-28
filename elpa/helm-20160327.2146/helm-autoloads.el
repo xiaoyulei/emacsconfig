@@ -143,8 +143,10 @@ Filename completion happen if string start after or between a double quote.
 
 (autoload 'helm-apropos "helm-elisp" "\
 Preconfigured helm to describe commands, functions, variables and faces.
+In non interactives calls DEFAULT argument should be provided as a string,
+i.e the `symbol-name' of any existing symbol.
 
-\(fn)" t nil)
+\(fn DEFAULT)" t nil)
 
 (autoload 'helm-manage-advice "helm-elisp" "\
 Preconfigured `helm' to disable/enable function advices.
