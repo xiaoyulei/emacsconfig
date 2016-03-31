@@ -311,4 +311,7 @@
  '(helm-ag-command-option "--all-text")
  '(helm-ag-insert-at-point 'symbol))
 
-
+;;-----------------------------------
+;; space instead of tab
+;;-----------------------------------
+(setq-default indent-tabs-mode nil);
