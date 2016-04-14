@@ -3,8 +3,7 @@
 ;;; Code:
 (add-to-list 'load-path (directory-file-name (or (file-name-directory #$) (car load-path))))
 
-;;;### (autoloads nil "imenu-anywhere" "imenu-anywhere.el" (22207
-;;;;;;  59923 313015 999000))
+;;;### (autoloads nil "imenu-anywhere" "imenu-anywhere.el" t)
 ;;; Generated autoloads from imenu-anywhere.el
 
 (autoload 'imenu-anywhere "imenu-anywhere" "\
