@@ -142,7 +142,6 @@
 ;;(add-to-list 'load-path "~/.emacs.d/elpa/go-mode-20141025.219")
 (prelude-require-package 'go-mode)
 (require 'go-mode)
-(require 'go-mode-autoloads)
 (add-hook 'before-save-hook 'gofmt-before-save nil t)
 (add-hook 'before-save-hook 'gofmt-before-save)
 
