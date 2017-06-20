@@ -157,11 +157,11 @@
         (define-key m ":" #'go-mode-insert-and-indent)
         (define-key m "=" #'go-mode-insert-and-indent)
         (define-key m (kbd "C-c C-a") #'go-import-add)
-        (define-key m (kbd "C-c C-j") #'godef-jump)
+        ;; (define-key m (kbd "C-c C-j") #'godef-jump)
         ;; go back to point after called godef-jump.  ::super
         (define-key m (kbd "C-c C-p") #'pop-tag-mark)
-        (define-key m (kbd "C-x 4 C-c C-j") #'godef-jump-other-window)
-        (define-key m (kbd "C-c C-d") #'godef-describe)
+        ;; (define-key m (kbd "C-x 4 C-c C-j") #'godef-jump-other-window)
+        ;; (define-key m (kbd "C-c C-d") #'godef-describe)
         m))
 ;; use goimports instead of gofmt ::super
 ;;(setq gofmt-command "goimports")
@@ -314,3 +314,19 @@
 ;; space instead of tab
 ;;-----------------------------------
 (setq-default indent-tabs-mode nil);
+
+
+;;-----------------------------------
+;; space instead of tab
+;;-----------------------------------
+(require 'go-guru)
+(add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
+(eval-after-load "go-guru"
+ '(progn
+   (define-key go-mode-map (kbd "C-c C-j") 'go-guru-definition)
+   (define-key go-mode-map (kbd "C-c C-r") 'go-guru-referrers)
+   (define-key go-mode-map (kbd "C-c C-d") 'go-guru-describe)
+   (define-key go-mode-map (kbd "C-c C-l") 'go-guru-implements)
+   (define-key go-mode-map (kbd "C-c C-c") 'go-guru-callers)
+   (define-key go-mode-map (kbd "C-c C-e") 'go-guru-callees)
+  ))
