@@ -1,6 +1,6 @@
 ;;; prelude-packages.el --- Emacs Prelude: default package selection.
 ;;
-;; Copyright © 2011-2016 Bozhidar Batsov
+;; Copyright © 2011-2017 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: https://github.com/bbatsov/prelude
@@ -35,8 +35,19 @@
 (require 'cl)
 (require 'package)
 
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+;; accessing a package repo over https on Windows is a no go, so we
+;; fallback to http there
+(if (eq system-type 'windows-nt)
+    (add-to-list 'package-archives
+                 '("melpa" . "http://melpa.org/packages/") t)
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/") t))
+
+;; load the pinned packages
+(let ((prelude-pinned-packages-file (expand-file-name "prelude-pinned-packages.el" prelude-dir)))
+  (if (file-exists-p prelude-pinned-packages-file)
+      (load prelude-pinned-packages-file)))
+
 ;; set package-user-dir to be relative to Prelude install path
 (setq package-user-dir (expand-file-name "elpa" prelude-dir))
 (package-initialize)
@@ -47,11 +58,13 @@
     anzu
     beacon
     browse-kill-ring
+    crux
     dash
     discover-my-major
     diff-hl
     diminish
     easy-kill
+    editorconfig
     epl
     expand-region
     flycheck
@@ -135,6 +148,7 @@ PACKAGE is installed only if not already present.  The file is opened in MODE."
     ("\\.coffee\\'" coffee-mode coffee-mode)
     ("\\.css\\'" css-mode css-mode)
     ("\\.csv\\'" csv-mode csv-mode)
+    ("Cask" cask-mode cask-mode)
     ("\\.d\\'" d-mode d-mode)
     ("\\.dart\\'" dart-mode dart-mode)
     ("\\.elm\\'" elm-mode elm-mode)
@@ -148,6 +162,7 @@ PACKAGE is installed only if not already present.  The file is opened in MODE."
     ("\\.haml\\'" haml-mode haml-mode)
     ("\\.hs\\'" haskell-mode haskell-mode)
     ("\\.json\\'" json-mode json-mode)
+    ("\\.kt\\'" kotlin-mode kotlin-mode)
     ("\\.kv\\'" kivy-mode kivy-mode)
     ("\\.latex\\'" auctex LaTeX-mode)
     ("\\.less\\'" less-css-mode less-css-mode)
@@ -164,7 +179,7 @@ PACKAGE is installed only if not already present.  The file is opened in MODE."
     ("PKGBUILD\\'" pkgbuild-mode pkgbuild-mode)
     ("\\.rs\\'" rust-mode rust-mode)
     ("\\.sass\\'" sass-mode sass-mode)
-    ("\\.scala\\'" scala-mode2 scala-mode)
+    ("\\.scala\\'" scala-mode scala-mode)
     ("\\.scss\\'" scss-mode scss-mode)
     ("\\.slim\\'" slim-mode slim-mode)
     ("\\.styl\\'" stylus-mode stylus-mode)

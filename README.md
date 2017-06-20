@@ -1,5 +1,5 @@
 [![License GPL 3][badge-license]](http://www.gnu.org/licenses/gpl-3.0.txt)
-[![Gratipay](http://img.shields.io/gratipay/bbatsov.svg)](https://gratipay.com/bbatsov/)
+[![Gratipay Team](https://img.shields.io/gratipay/team/prelude.svg?maxAge=2592000)](https://gratipay.com/prelude/)
 
 Emacs Prelude
 =============
@@ -13,14 +13,20 @@ library to the mix. The final product offers an easy to use Emacs
 configuration for Emacs newcomers and lots of additional power for
 Emacs power users.
 
-Prelude is compatible **ONLY with GNU Emacs 24.x**. In general you're
+Prelude is compatible **ONLY with GNU Emacs 24.4+**. In general you're
 advised to always run Prelude with the latest Emacs - currently
-**24.5**.
+**25.2**.
+
+You can support the development of Prelude via
+[Salt](https://bountysource.com/teams/prelude) and
+[Gratipay](https://www.gratipay.com/prelude).
+
+[![Support via Gratipay](https://cdn.rawgit.com/gratipay/gratipay-badge/2.1.3/dist/gratipay.png)](https://gratipay.com/prelude)
 
 **Table of Contents**
 
 - [Fast Forward](#fast-forward)
-- [Installing Emacs 24](#installing-emacs-24)
+- [Installing Emacs](#installing-emacs)
 - [Installation](#installation)
     - [Automated](#automated)
         - [Via Curl](#via-curl)
@@ -53,7 +59,7 @@ advised to always run Prelude with the latest Emacs - currently
     - [Problems with flyspell-mode](#problems-with-flyspell-mode)
     - [Ugly colors in the terminal Emacs version](#ugly-colors-in-the-terminal-emacs-version)
     - [MELPA error on initial startup](#melpa-error-on-initial-startup)
-    - [Warnings on arrow navigation in editor buffers](#warnings-on-navigation-in-editor-buffers)
+    - [Warnings on arrow navigation in editor buffers](#warnings-on-arrow-navigation-in-editor-buffers)
     - [Customized C-a behavior](#customized-c-a-behavior)
     - [Poor ido matching performance on large datasets](#poor-ido-matching-performance-on-large-datasets)
     - [Windows compatibility](#windows-compatibility)
@@ -65,7 +71,7 @@ advised to always run Prelude with the latest Emacs - currently
 ## Fast Forward
 
 Assuming you're using an Unix-like OS (`*BSD`, `GNU/Linux`, `OS X`, `Solaris`,
-etc), you already have Emacs 24 installed, as well as `git` & `curl` you
+etc), you already have Emacs 24.4+ installed, as well as `git` & `curl` you
 can skip the whole manual and just type in your favorite shell the
 following command:
 
@@ -98,10 +104,12 @@ or back up your existing `.emacs.d` directory manually.
 Don't forget to adjust your `prelude-modules.el` file once the installation is done.
 By default most of the modules that ship with Prelude are not loaded.
 
-## Installing Emacs 24
+## Installing Emacs
 
-Obviously to use the Emacs Prelude you have to install Emacs 24
-first. Have a look at the [WikEmacs articles on installing Emacs](http://wikemacs.org/index.php/Installing_Emacs).
+Obviously to use the Emacs Prelude you have to install Emacs
+first. Have a look at
+the
+[WikEmacs articles on installing Emacs](http://wikemacs.org/index.php/Installing_Emacs).
 
 ## Installation
 
@@ -165,6 +173,15 @@ there are such).
 ### Automatic update
 
 Simply run <kbd>M-x prelude-update</kbd> from Emacs itself and restart Emacs afterwards.
+
+## Pinning packages
+
+By default, Prelude will install packages from the melpa and gnu package
+repositories. Occasionally package integration can break when upgrading packages.
+This can be avoided by pinning packages to stable versions in other repositories.
+To do so, copy `prelude-pinned-packages.el` from the sample directory to
+Prelude's root directory and adjust the [variables](https://www.gnu.org/software/emacs/manual/html_node/emacs/Package-Installation.html)
+inside accordingly.
 
 ## Enabling additional modules
 
@@ -265,7 +282,7 @@ Keybinding         | Description
 <kbd>C-+</kbd>     | Increase font size(`text-scale-increase`).
 <kbd>C--</kbd>     | Decrease font size(`text-scale-decrease`).
 <kbd>C-x O</kbd>   | Go back to previous window (the inverse of `other-window` (`C-x o`)).
-<kbd>C-^</kbd>     | Join two lines into one(`prelude-top-join-line`).
+<kbd>C-^</kbd>     | Join two lines into one(`crux-top-join-line`).
 <kbd>C-x p</kbd>   | Start `proced` (manage processes from Emacs; works only in Linux).
 <kbd>C-x m</kbd>   | Start `eshell`.
 <kbd>C-x M-m</kbd> | Start your default shell.
@@ -281,7 +298,7 @@ Keybinding         | Description
 <kbd>C-x M-g</kbd> | Open Magit's popup of popups.
 <kbd>M-Z</kbd>     | Zap up to char.
 <kbd>C-=</kbd>     | Run `expand-region` (incremental text selection).
-<kbd>C-a</kbd>     | Run `prelude-move-beginning-of-line`. Read [this](http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/) for details.
+<kbd>C-a</kbd>     | Run `crux-move-beginning-of-line`. Read [this](http://emacsredux.com/blog/2013/05/22/smarter-navigation-to-the-beginning-of-a-line/) for details.
 
 #### Prelude Mode
 
@@ -432,7 +449,7 @@ Keybinding         | Description
 <kbd>jj</kbd>      | Jump to the beginning of a word(`avy-goto-word-1`)
 <kbd>jk</kbd>      | Jump to a character(`avy-goto-char`)
 <kbd>jl</kbd>      | Jump to the beginning of a line(`avy-goto-line`)
-<kbd>JJ</kbd>      | Jump back to previous buffer(`prelude-switch-to-previous-buffer`)
+<kbd>JJ</kbd>      | Jump back to previous buffer(`crux-switch-to-previous-buffer`)
 <kbd>uu</kbd>      | View edits as a tree(`undo-tree-visualize`)
 <kbd>xx</kbd>      | Executed extended command(`execute-extended-command`)
 <kbd>yy</kbd>      | Browse the kill ring(`browse-kill-ring`)
@@ -471,17 +488,17 @@ You can, of course, install anything you wish manually as well.
 
 ### Color Themes
 
-Emacs 24 ships with a new theming facility that effectively renders
-the old color-theme package obsolete. Emacs 24 provides a dozen of
+Emacs provides a dozen of
 built-in themes you can use out-of-the-box by invoking the `M-x
 load-theme` command.
 
-[Zenburn](https://github.com/bbatsov/zenburn-emacs) is the default color theme in Prelude, but you can change it
-at your discretion. Why Zenburn? I (and lots of hackers around the
-world) find it pretty neat for some reason. Personally I find the
-default theme pretty tiresome for the eyes, that's why I took that
-"controversial" decision to replace it. You can, of course, easily go
-back to the default (or select another theme entirely).
+[Zenburn](https://github.com/bbatsov/zenburn-emacs) is the default
+color theme in Prelude, but you can change it at your discretion. Why
+Zenburn? I (and lots of hackers around the world) find it pretty neat
+for some reason. Personally I find the default theme pretty tiresome
+for the eyes, that's why I took that "controversial" decision to
+replace it. You can, of course, easily go back to the default (or
+select another theme entirely).
 
 To disable Zenburn just put in your personal config the following
 line:
@@ -663,7 +680,7 @@ You can always disable the improved sorting algorithm all together like this:
 ### Windows compatibility
 
 While everything in Prelude should work fine in Windows, I test it only
-with Linux & OSX, so there are Windows related problems from time to
+with Linux & OS X, so there are Windows related problems from time to
 time. This situation will probably improve over time.
 
 ## Known issues
@@ -688,10 +705,6 @@ development of Emacs Prelude.
 
 Bug reports and suggestions for improvements are always
 welcome. GitHub pull requests are even better! :-)
-
-I'm also accepting financial contributions via [gittip](https://www.gittip.com/bbatsov).
-
-[![Support via Gittip](https://rawgithub.com/twolfson/gittip-badge/0.2.0/dist/gittip.png)](https://www.gittip.com/bbatsov)
 
 Cheers,<br/>
 [Bozhidar](https://twitter.com/bbatsov)
