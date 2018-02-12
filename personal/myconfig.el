@@ -4,6 +4,10 @@
 ;;insert cmd to .bashrc to set color display
 ;;alias ls="ls --color=always"
 
+(setq package-archives '(("gnu"   . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+                         ("melpa" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/")))
+(package-initialize) ;; You might already have this line
+
 ;;-------------------------
 ;; set env
 ;;-------------------------
@@ -317,7 +321,7 @@
 
 
 ;;-----------------------------------
-;; space instead of tab
+;; go-guru
 ;;-----------------------------------
 (require 'go-guru)
 (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
@@ -330,3 +334,60 @@
    (define-key go-mode-map (kbd "C-c C-c") 'go-guru-callers)
    (define-key go-mode-map (kbd "C-c C-e") 'go-guru-callees)
   ))
+
+
+;;-----------------------------------
+;; rtags
+;;-----------------------------------
+(prelude-require-package 'rtags)
+(require 'package)
+(package-initialize)
+(require 'rtags)
+(require 'flycheck-rtags)
+(require 'company)
+
+(setq rtags-display-result-backend 'helm)
+(setq rtags-autostart-diagnostics t)
+(rtags-diagnostics)
+(setq rtags-completions-enabled t)
+(push 'company-rtags company-backends)
+(global-company-mode)
+(define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+
+(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+(add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
+
+(eval-after-load "rtags"
+  '(progn
+     (setq-default rtags-use-helm 't)
+     (setq-default rtags-popup-results-buffer nil)
+     (define-key c-mode-base-map (kbd "C-c C-j") 'rtags-find-symbol-at-point)
+     (define-key c-mode-base-map (kbd "C-c C-r") (function rtags-find-references-at-point))
+     (define-key c-mode-base-map (kbd "C-c C-f") (function rtags-find-file))
+     (define-key c-mode-base-map (kbd "C-x r s") (function rtags-find-symbol))
+     (define-key c-mode-base-map (kbd "C-x r f") (function rtags-find-references))
+     (define-key c-mode-base-map (kbd "C-x r v") (function rtags-find-virtuals-at-point))
+     (define-key c-mode-base-map (kbd "C-x r n") (function rtags-next-match))
+     (define-key c-mode-base-map (kbd "C-x r p") (function rtags-previous-match))
+     (define-key c-mode-base-map (kbd "C-x r i") (function rtags-imenu))
+     (define-key c-mode-base-map (kbd "C-c C-p") (function rtags-location-stack-back))
+     (define-key c-mode-base-map (kbd "M-.") (function rtags-location-stack-forward))
+     ;;(define-key c-mode-base-map (kbd "M-<") (function rtags-location-stack-forward))
+     ))
+;;; use "echo | cpp -xc++ -Wp,-v" to find the system files directory
+(setq rtags-rdm-includes
+"
+/usr/include/c++/5
+/usr/include/x86_64-linux-gnu/c++/5
+/usr/include/c++/5/backward
+/usr/lib/gcc/x86_64-linux-gnu/5/include
+/usr/local/include
+/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed
+/usr/include/x86_64-linux-gnu
+/usr/include
+"
+)
+
+
+
