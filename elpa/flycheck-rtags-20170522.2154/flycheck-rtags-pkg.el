@@ -1,0 +1,1 @@
+(define-package "flycheck-rtags" "20170522.2154" "RTags Flycheck integration." '((emacs "24") (flycheck "0.23") (rtags "2.10")) :commit "2b0c88cc470b06b65232c23df4b6fbfc4b534580" :url "http://rtags.net")
