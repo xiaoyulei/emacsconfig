@@ -79,7 +79,7 @@
 ;; set mark hotkey
 (global-set-key (kbd "M-m") 'set-mark-command)
 ;; set goto line hotkey
-(global-set-key (kbd "M-g") 'goto-line)
+;(global-set-key (kbd "M-g") 'goto-line)
 ;;block emacs hide key
 (global-set-key (kbd "C-z") 'nil)
 (global-set-key (kbd "C-x C-z") 'nil)
@@ -248,20 +248,20 @@
 ;;;;-----------------------------------
 
 ;; Enable helm-gtags-mode
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'c++-mode-hook 'helm-gtags-mode)
-(add-hook 'asm-mode-hook 'helm-gtags-mode)
+;(add-hook 'c-mode-hook 'helm-gtags-mode)
+;(add-hook 'c++-mode-hook 'helm-gtags-mode)
+;(add-hook 'asm-mode-hook 'helm-gtags-mode)
 
 ;; Set key bindings
-(eval-after-load "helm-gtags"
-  '(progn
-     (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
-     (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
-     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
-     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
-     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-     (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
+;(eval-after-load "helm-gtags"
+;  '(progn
+;     (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
+;     (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+;     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+;     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+;     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+;     (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+;     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
 
 
 ;;-----------------------------------
