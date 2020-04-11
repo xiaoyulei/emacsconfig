@@ -1,6 +1,6 @@
 ;;; prelude-evil.el --- Emacs Prelude: evil-mode configuration.
 ;;
-;; Copyright © 2011-2017 Bozhidar Batsov
+;; Copyright © 2011-2020 Bozhidar Batsov
 ;;
 ;; Author: Bozhidar Batsov <bozhidar@batsov.com>
 ;; URL: http://batsov.com/prelude
@@ -114,10 +114,10 @@
 (evil-add-hjkl-bindings magit-commit-mode-map 'emacs)
 (evil-add-hjkl-bindings magit-branch-manager-mode-map 'emacs
   "K" 'magit-discard
-  "L" 'magit-log-popup)
+  "L" 'magit-log)
 (evil-add-hjkl-bindings magit-status-mode-map 'emacs
   "K" 'magit-discard
-  "l" 'magit-log-popup
+  "l" 'magit-log
   "h" 'magit-diff-toggle-refine-hunk)
 
 (setq evil-shift-width 2)

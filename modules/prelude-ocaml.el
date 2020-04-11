@@ -1,6 +1,6 @@
 ;;; prelude-ocaml.el --- Emacs Prelude: decent Perl coding settings.
 ;;
-;; Copyright © 2014-2017 Geoff Shannon
+;; Copyright © 2014-2020 Geoff Shannon
 ;;
 ;; Author: Geoff Shannon <geoffpshannon@gmail.com>
 ;; URL: https://github.com/bbatsov/prelude
@@ -28,7 +28,7 @@
 ;; The minimum required setup for using Prelude's OCaml setup would be
 ;; to install OPAM, and then, minimally `opam install core utop'.  A
 ;; good getting started guide is available at
-;; https://github.com/realworldocaml/book/wiki/Installation-Instructions
+;; https://dev.realworldocaml.org/install.html
 
 ;;; License:
 
